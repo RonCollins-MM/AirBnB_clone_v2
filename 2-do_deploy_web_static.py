@@ -1,30 +1,57 @@
 #!/usr/bin/python3
-"""
-Fabric script based on the file 1-pack_web_static.py that distributes an
-archive to the web servers
-"""
+"""this fabfile destributes archive to my webservers"""
+from fabric.api import *
+from datetime import datetime
+import os
 
-from fabric.api import put, run, env
-from os.path import exists
-env.hosts = ['54.174.153.154', '18.207.234.225']
+
+env.hosts = ['34.232.70.87', '35.153.16.39']
+
+
+def do_pack():
+    """creates an archive of the airbnb clone"""
+    filename = ""
+    exe = ""
+    if not os.path.exists("versions"):
+        os.mkdir("versions")
+    filename = "versions/web_static_{}.tgz web_static"\
+        .format(datetime.now().strftime("%Y%m%d%H%m%S"))
+    exe = "tar -cvzf " + filename
+    result = local(exe)
+    if result.failed:
+        return None
+    return filename
 
 
 def do_deploy(archive_path):
-    """distributes an archive to the web servers"""
-    if exists(archive_path) is False:
+    """deploys the archive file in the path provided"""
+    folder = archive_path.split("/")[-1].split(".tgz")[0]
+    archive = archive_path.split("/")[-1]
+    archive_dir = "/data/web_static/releases/{}/".format(folder)
+    if not os.path.exists(archive_path):
         return False
-    try:
-        file_n = archive_path.split("/")[-1]
-        no_ext = file_n.split(".")[0]
-        path = "/data/web_static/releases/"
-        put(archive_path, '/tmp/')
-        run('mkdir -p {}{}/'.format(path, no_ext))
-        run('tar -xzf /tmp/{} -C {}{}/'.format(file_n, path, no_ext))
-        run('rm /tmp/{}'.format(file_n))
-        run('mv {0}{1}/web_static/* {0}{1}/'.format(path, no_ext))
-        run('rm -rf {}{}/web_static'.format(path, no_ext))
-        run('rm -rf /data/web_static/current')
-        run('ln -s {}{}/ /data/web_static/current'.format(path, no_ext))
-        return True
-    except:
+    result = put(archive_path, '/tmp/{}'.format(archive))
+    if result.failed:
         return False
+    result = run("mkdir -p {}".format(archive_dir))
+    if result.failed:
+        return False
+    result = run("tar -xzf /tmp/{} -C {}".format(archive, archive_dir))
+    if result.failed:
+        return False
+    result = run("rm /tmp/{}".format(archive))
+    if result.failed:
+        return False
+    result = run("mv {}web_static/* {}".format(archive_dir, archive_dir))
+    if result.failed:
+        return False
+    result = run("sudo rm -rf /data/web_static/current")
+    if result.failed:
+        return False
+    result = run("rm -rf {}web_static".format(archive_dir))
+    if result.failed:
+        return False
+    result = run("ln -s {} /data/web_static/current".format(archive_dir))
+    if result.failed:
+        return False
+    return True
