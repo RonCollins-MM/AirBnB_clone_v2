@@ -9,7 +9,7 @@ echo -e "\e[1;32m Packages updated\e[0m"
 echo
 
 sudo ufw allow 'Nginx HTTP'
-sudo -e "\e[1;32m Allow incoming NGINX HTTP connections\e[0m"
+#sudo -e "\e[1;32m Allow incoming NGINX HTTP connections\e[0m"
 echo
 
 sudo mkdir -p /data/web_static/releases/test /data/web_static/shared
@@ -58,6 +58,9 @@ new_config=\
 "
 echo "Ceci n'est pas une page" > /var/www/html/404.html
 echo "$new_config" > /etc/nginx/sites-available/default
+
+sudo ln -sf '/etc/nginx/sites-available/default' '/etc/nginx/sites-enabled/default'
+echo -e "\e[1;32m Symbolic link created\e[0m"
 
 if [ "$(pgrep -c nginx)" -le 0 ];
 then
