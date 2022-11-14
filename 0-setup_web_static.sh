@@ -30,11 +30,9 @@ new_config=\
 "server {
         listen 80 default_server;
         listen [::]:80 default_server;
-        
+
 	root /var/www/html;
         index index.html index.htm index.nginx-debian.html;
-
-        server_name _;
 
 	add_header X-Served-By \$hostname;
         location / {
@@ -47,13 +45,15 @@ new_config=\
         }
 
         error_page 404 /404.html;
-        location  /404.html {
+        location  /404 {
+	    root /var/www/html;
             internal;
         }
         
-        if (\$request_filename ~ redirect_me){
-            rewrite ^ https://www.youtube.com/user/Computerphile permanent;
+        location /redirect_me {
+            return 301 https://www.youtube.com/user/Computerphile;
         }
+
 }
 "
 echo "Ceci n'est pas une page" > /var/www/html/404.html
