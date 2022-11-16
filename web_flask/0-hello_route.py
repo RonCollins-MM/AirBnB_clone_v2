@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-starts a Flask web application
+Flask web application on localhost listening on port 5000
 """
 
 from flask import Flask
@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 @app.route('/', strict_slashes=False)
 def index():
-    """returns Hello HBNB!"""
+    """Prints a simple hello string"""
     return 'Hello HBNB!'
 
 if __name__ == '__main__':
