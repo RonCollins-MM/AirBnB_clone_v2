@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-starts a Flask web application
+Simple Flask web application, localhost port:5000
 """
 
 from flask import Flask
@@ -9,26 +9,29 @@ app = Flask(__name__)
 
 @app.route('/', strict_slashes=False)
 def index():
-    """returns Hello HBNB!"""
+    """prints Hello HBNB!"""
     return 'Hello HBNB!'
 
 
 @app.route('/hbnb', strict_slashes=False)
 def hbnb():
-    """returns HBNB"""
+    """prints HBNB"""
     return 'HBNB'
 
 
 @app.route('/c/<text>', strict_slashes=False)
 def cisfun(text):
-    """display “C ” followed by the value of the text variable"""
+    """
+    Print 'C' followed by the value of the `text` variable
+    Underscores replaced by whitespaces.
+    """
     return 'C ' + text.replace('_', ' ')
 
 
 @app.route('/python', strict_slashes=False)
 @app.route('/python/<text>', strict_slashes=False)
 def pythoniscool(text='is cool'):
-    """display “Python ”, followed by the value of the text variable"""
+    """Print 'Python', followed by the value of the `text` variable"""
     return 'Python ' + text.replace('_', ' ')
 
 if __name__ == '__main__':
